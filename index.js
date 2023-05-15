@@ -24,6 +24,7 @@ const client = new MongoClient(uri, {
 
 const VerifyJWT = (req,res,next)=>{
   const authorization = req.headers.authorization ;
+  console.log(authorization)
   if(!authorization){
     return res.status(401).send({error: true , message: "UnAuthorization Access"})
   }
@@ -70,16 +71,16 @@ async function run() {
 
     app.post('/jwt',(req , res )=>{
       const user = req.body
-      const token = jwt.sign(user,process.env.ACCESS_TOKEN_SECRETE ,{expiresIn: '10h'})
+      const token = jwt.sign(user,process.env.ACCESS_TOKEN_SECRETE ,{expiresIn: '1h'})
       res.send({token})
     })
 
     // bookings routs 
 
     app.get("/bookings", VerifyJWT , async (req, res) => {
-      console.log('come back to booking ')
       const decoded = req.decoded ;
-      if(decoded !== req.query.email){
+      console.log('come back to booking ' ,decoded , req.query.email)
+      if(decoded.email !== req.query.email){
         return res.status(403).send({error: 1 , message: 'This Email Data You Not Access'})
       }
       let query = {};
