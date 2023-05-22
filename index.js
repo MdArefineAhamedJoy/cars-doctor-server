@@ -48,11 +48,18 @@ async function run() {
     const bookingCollation = client.db("carDoctor").collection("booking");
 
 
-
     // services routes 
 
     app.get("/services", async (req, res) => {
-      const cursor = servicesCollation.find();
+      const short = req.query.short
+     const search = req.query.search
+     console.log(search)
+      // const query = {"price": {$gt: 50 }};
+      const query = {title:{$regex:search ,$options:'i'}}
+      const option = {
+        sort: { "price": short === 'asc' ? 1 : -1 },
+      };
+      const cursor = servicesCollation.find( query , option );
       const result = await cursor.toArray();
       res.send(result);
     });
